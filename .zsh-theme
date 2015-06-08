@@ -49,7 +49,7 @@ local git_branch='$(git_prompt_info)%{$PR_NO_COLOR%}'
 #PROMPT="$(current_time) ${user_host} ${current_dir} ${rvm_ruby} ${git_branch}$PR_PROMPT "
 PROMPT="╭─${current_time} ${user_host} ${current_dir} ${rvm_ruby} ${git_branch}
 ╰─$PR_PROMPT "
-RPS1='$(vi_mode_prompt_info) ${return_code}'
+RPS1='$(vi_mode_prompt_info) '"${return_code}"
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$PR_YELLOW%}‹"
 ZSH_THEME_GIT_PROMPT_SUFFIX="› %{$PR_NO_COLOR%}"
