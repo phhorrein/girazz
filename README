@@ -1,2 +1,4 @@
 Slight modification to the gnzh theme which adds VI mode to the right prompt
-
+To install this theme, run:
+  `cd ~/.oh-my-zsh/themes && wget https://raw.githubusercontent.com/mdentremont/girazz/master/girazz.zsh-theme`
+  And add `ZSH_THEME="girazz"` to `~/.zshrc`
