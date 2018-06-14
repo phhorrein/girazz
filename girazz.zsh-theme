@@ -41,13 +41,61 @@ if which rvm-prompt &> /dev/null; then
   rvm_ruby='%{$PR_RED%}‹$(rvm-prompt i v g s)›%{$PR_NO_COLOR%}'
 else
   if which rbenv &> /dev/null; then
-    rvm_ruby='%{$PR_RED%}‹$(rbenv version | sed -e "s/ (set.*$//")›%{$PR_NO_COLOR%}'
+  rvm_ruby='%{$PR_RED%}‹$(rbenv version | sed -e "s/ (set.*$//")›%{$PR_NO_COLOR%}'
   fi
 fi
-local git_branch='$(git_prompt_info)%{$PR_NO_COLOR%}'
 
-#PROMPT="$(current_time) ${user_host} ${current_dir} ${rvm_ruby} ${git_branch}$PR_PROMPT "
-PROMPT="╭─${current_time} ${user_host} ${current_dir} ${rvm_ruby} ${git_branch}
+# Simplified function to be used in Windows since git is so slow in WSL
+function windows_git_prompt_info() {
+  if which git &> /dev/null; then
+    local g="$(git rev-parse --git-dir 2>/dev/null)"
+    if [[ -n "$g" ]]; then
+      local r
+      local b
+      if [ -d "$g/rebase-apply" ]; then
+        if test -f "$g/rebase-apply/rebasing"; then
+          r="|rebase"
+        elif test -f "$g/rebase-apply/applying"; then
+          r="|am"
+        else
+          r="|am/rebase"
+        fi
+        b="$(git symbolic-ref HEAD 2>/dev/null)"
+      elif [ -f "$g/rebase-merge/interactive" ]; then
+        r="|rebase-i"
+        b="$(cat "$g/rebase-merge/head-name")"
+      elif [ -d "$g/rebase-merge" ]; then
+        r="|rebase-m"
+        b="$(cat "$g/rebase-merge/head-name")"
+      elif [ -f "$g/MERGE_HEAD" ]; then
+        r="|merging"
+        b="$(git symbolic-ref HEAD 2>/dev/null)"
+      else
+        if [ -f "$g/BISECT_LOG" ]; then
+          r="|bisecting"
+        fi
+        b="$(cut -f2 -d" " "$g/HEAD")"
+        if [[ "${b##refs/heads/}" == "${b}" ]]; then
+          if ! b="$(git symbolic-ref HEAD 2>/dev/null)"; then
+            if ! b="$(git describe --exact-match HEAD 2>/dev/null)"; then
+              b="$(cut -c1-7 "$g/HEAD")..."
+            fi
+          fi
+        fi
+      fi
+      echo `printf "%s" "${PR_BLUE}[${PR_GREEN}${b##refs/heads/}$r${PR_BLUE}]${PR_NO_COLOR}"`
+    fi
+  fi
+}
+
+local git_prompt
+if [[ $(uname -a | grep -iq -e 'windows' -e 'microsoft') -eq 0 ]]; then
+  git_prompt='$(windows_git_prompt_info)'
+else
+  git_prompt='$(git_prompt_info)'
+fi
+
+PROMPT="╭─${current_time} ${user_host} ${current_dir} ${rvm_ruby} ${git_prompt}%{$PR_NO_COLOR%}
 ╰─$PR_PROMPT "
 RPS1='$(vi_mode_prompt_info) '"${return_code}"
 
