@@ -83,7 +83,7 @@ function windows_git_prompt_info() {
           fi
         fi
       fi
-      echo `printf "%s" "${PR_BLUE}[${PR_GREEN}${b##refs/heads/}$r${PR_BLUE}]${PR_NO_COLOR}"`
+      echo `printf "%s" "${PR_CYAN}<${PR_GREEN}${b##refs/heads/}$r${PR_CYAN}>${PR_NO_COLOR}"`
     fi
   fi
 }
