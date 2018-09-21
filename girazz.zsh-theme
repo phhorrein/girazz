@@ -14,7 +14,7 @@ eval PR_NO_COLOR="%{$terminfo[sgr0]%}"
 eval PR_BOLD="%{$terminfo[bold]%}"
 
 # Check the UID
-if [[ -v PR_CUST_USER_COLOR ]]; then
+if (( ${+PR_CUST_USER_COLOR} )); then
   eval PR_USER_COLOR='%{$fg[${(L)PR_CUST_USER_COLOR}]%}'
   eval PR_USER='${PR_USER_COLOR}%n${PR_NO_COLOR}'
   eval PR_USER_OP='${PR_USER_COLOR}%#${PR_NO_COLOR}'
@@ -31,7 +31,7 @@ fi
 
 
 # Check if we are on SSH or not
-if [[ -v PR_CUST_HOST_COLOR ]]; then
+if (( ${+PR_CUST_HOST_COLOR} )) then
   eval PR_HOST_COLOR='%{$fg[${(L)PR_CUST_HOST_COLOR}]%}'
   eval PR_HOST='${PR_HOST_COLOR}%M${PR_NO_COLOR}' #SSH
 elif [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then
